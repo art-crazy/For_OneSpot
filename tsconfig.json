@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "allowJs": true,
+    "sourceMap": true,
+    "types": ["react", "react-dom", "react-router-dom", "gif"],
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
+    "lib": ["es2016", "dom"],
+    "target": "es6",
+    "module": "commonjs",
+  },
+  "include": [
+    "src"
+  ]
+}

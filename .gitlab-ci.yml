@@ -1,0 +1,75 @@
+image: docker:19.03
+
+services:
+  - name: docker:19.03-dind
+    alias: docker
+
+stages:
+  - frontend
+  - deploy
+
+build:
+  image: node:19.2.0-alpine
+  stage: frontend
+  when: manual
+  tags:
+    - k8s
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - ./
+  only:
+    - master
+    - /^landing\//
+  script:
+    - npm install && npm run build-prod && rm -rf node_modules
+
+deploy-web:
+  image: alpine
+  stage: deploy
+  needs: [ build ]
+  when: manual
+  tags:
+    - k8s
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - ./
+  only:
+    - master
+  variables:
+    SERVER: 0.0.0.0
+    USER: gitlab-runner
+    FOLDER: "FOLDER"
+  script:
+    - apk add --no-cache openssh rsync bash
+    - mkdir -p ~/.ssh
+    - echo "$PRIVATE_KEY" >> ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    - rsync --exclude '.git' --exclude '.gitlab-ci.yml' -rav --delete ./dist/ $USER@$SERVER:"$FOLDER/"
+
+deploy-landing:
+  image: alpine
+  stage: deploy
+  needs: [ build ]
+  when: manual
+  tags:
+    - k8s
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - ./
+  only:
+    - /^landing\//
+  variables:
+    SERVER: 0.0.0.0
+    USER: gitlab-runner
+    FOLDER: ""
+  script:
+    - apk add --no-cache openssh rsync bash
+    - mkdir -p ~/.ssh
+    - echo "$PRIVATE_KEY" >> ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    - rsync --exclude '.git' --exclude '.gitlab-ci.yml' -rav --delete ./dist/ $USER@$SERVER:"$FOLDER/$CI_COMMIT_BRANCH"

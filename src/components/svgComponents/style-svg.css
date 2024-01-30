@@ -1,0 +1,42 @@
+.svg__loupe {
+    color: #929292;
+}
+
+.svg__loupe__transition {
+    color: #929292;
+    transition: 0.5s;
+}
+
+.header__container__search__block__top:hover > .svg__loupe__transition__hide > .svg__loupe__transition {
+    color: white;
+    transition: 0.5s;
+}
+
+.header__container__search__block__top:hover > .svg__loupe__transition__not_hide > .svg__loupe__transition {
+    color: white;
+    transition: 0.5s;
+}
+
+.svg__loupe__transition__not_hide {
+    transform: translate(0%, 10%)
+}
+
+.svg__loupe__transition__hide {
+    opacity: 0;
+    position: absolute;
+}
+
+.svg__logo__transition {
+    color: #929292;
+    transition: 0.5s;
+}
+
+.user-avatar__container_pc__link:hover > .svg__logo__transition {
+    color: white;
+    transition: 0.5s;
+}
+
+.user-avatar__name__pc:hover > .user-avatar__logo > .svg__logo__transition {
+    color: white;
+    transition: 0.5s;
+}
